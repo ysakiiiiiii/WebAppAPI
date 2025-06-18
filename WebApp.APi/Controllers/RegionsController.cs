@@ -66,5 +66,29 @@ namespace WebApp.APi.Controllers
             
             return Ok(regionDto);
         }
+
+        [HttpPost]
+        public IActionResult Create([FromBody] AddRegionRequestDto addRegionRequestDto)
+        {
+            //Convert Dto to Domain Model
+            var regionDomainModel = new Region()
+            {
+                Code = addRegionRequestDto.Code,
+                Name = addRegionRequestDto.Name,
+                RegionImageUrl = addRegionRequestDto.RegionImageUrl
+            };
+
+            //Use Domain Model to Create Region
+            _dbContext.Regions.Add(regionDomainModel);
+            _dbContext.SaveChanges();
+
+            return CreatedAtAction(nameof(GetById), new { id = regionDomainModel.Id }, new RegionDto()
+            {
+                Id = regionDomainModel.Id,
+                Code = regionDomainModel.Code,
+                Name = regionDomainModel.Name,
+                RegionImageUrl = regionDomainModel.RegionImageUrl
+            });
+        }
     }
 }
