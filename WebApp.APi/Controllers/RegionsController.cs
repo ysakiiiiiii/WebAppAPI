@@ -31,13 +31,13 @@ namespace WebApp.APi.Controllers
             //Convert each region domain model to a region DTO
             foreach (var regionDomain in regionsDomain)
             {
-                regionsDto.Add(new RegionDto() 
+                regionsDto.Add(new RegionDto()
                 {
-                   Id= regionDomain.Id,
-                   Code= regionDomain.Code,
-                   Name= regionDomain.Name,
-                   RegionImageUrl= regionDomain.RegionImageUrl
-               });
+                    Id = regionDomain.Id,
+                    Code = regionDomain.Code,
+                    Name = regionDomain.Name,
+                    RegionImageUrl = regionDomain.RegionImageUrl
+                });
             }
             return Ok(regionsDto);
         }
@@ -51,7 +51,7 @@ namespace WebApp.APi.Controllers
             var region = _dbContext.Regions.FirstOrDefault(x => x.Id == id);
             if (region == null)
             {
-          
+
                 return NotFound();
             }
 
@@ -63,7 +63,7 @@ namespace WebApp.APi.Controllers
                 Name = region.Name,
                 RegionImageUrl = region.RegionImageUrl
             };
-            
+
             return Ok(regionDto);
         }
 
@@ -89,6 +89,37 @@ namespace WebApp.APi.Controllers
                 Name = regionDomainModel.Name,
                 RegionImageUrl = regionDomainModel.RegionImageUrl
             });
+        }
+
+        //Update a region
+        [HttpPut]
+        [Route("{id:Guid}")]
+
+        public IActionResult Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
+        {
+            var regionDomainModel = _dbContext.Regions.FirstOrDefault(x => x.Id == id);
+
+            if (regionDomainModel == null)
+            {
+                return NotFound();
+            }
+            
+            regionDomainModel.Code = updateRegionRequestDto.Code;
+            regionDomainModel.Name = updateRegionRequestDto.Name;
+            regionDomainModel.RegionImageUrl = updateRegionRequestDto.RegionImageUrl;
+
+            _dbContext.SaveChanges();
+
+            var regionDto = new RegionDto()
+            {
+                Id = regionDomainModel.Id,
+                Code = regionDomainModel.Code,
+                Name = regionDomainModel.Name,
+                RegionImageUrl = regionDomainModel.RegionImageUrl
+            };
+
+            return Ok(regionDto);
+
         }
     }
 }

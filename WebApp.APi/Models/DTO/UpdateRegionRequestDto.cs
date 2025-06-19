@@ -1,6 +1,6 @@
 ﻿namespace WebApp.APi.Models.DTO
 {
-    public class AddRegionRequestDto
+    public class UpdateRegionRequestDto
     {
         public string Code { get; set; }
         public string Name { get; set; }
