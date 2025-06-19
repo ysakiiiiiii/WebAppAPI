@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WebApp.APi.Data;
+using WebApp.APi.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,7 @@ builder.Services.AddSwaggerGen();
 
 string connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connectionString));
-
+builder.Services.AddScoped<IRegionRepository, SQLRegionRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
