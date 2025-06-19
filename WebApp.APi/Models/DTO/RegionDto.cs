@@ -8,3 +8,4 @@
         public string? RegionImageUrl { get; set; }
     }
 }
+    
