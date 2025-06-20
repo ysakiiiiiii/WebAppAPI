@@ -33,5 +33,16 @@ namespace WebApp.APi.Controllers
             return Ok(mapper.Map<WalkDto>(walkDomainModel));
 
         }
+
+        //Get:/api/walks?filterOn=Name&filterQuery=Track
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery)
+        {
+            //Get all walks from the repository
+            var walksDomainModel = await walkRepository.GetAllAsync(filterOn,filterQuery);
+            //Map Domain Model to DTO
+            var walksDto = mapper.Map<List<WalkDto>>(walksDomainModel);
+            return Ok(walksDto);
+        }
     }
 }
