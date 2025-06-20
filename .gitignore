@@ -363,4 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Ignore appsettings for security
-appsettings.json
+**/appsettings.json

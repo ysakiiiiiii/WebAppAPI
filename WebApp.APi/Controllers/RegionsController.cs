@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -6,11 +7,11 @@ using WebApp.APi.Data;
 using WebApp.APi.Models.Domain;
 using WebApp.APi.Models.DTO;
 using WebApp.APi.Repositories;
-
 namespace WebApp.APi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class RegionsController : ControllerBase
     {
         private readonly ApplicationDbContext _dbContext;
