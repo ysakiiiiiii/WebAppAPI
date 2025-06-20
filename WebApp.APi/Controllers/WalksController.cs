@@ -34,12 +34,14 @@ namespace WebApp.APi.Controllers
 
         }
 
-        //Get:/api/walks?filterOn=Name&filterQuery=Track
+        //Get:/api/walks?filterOn=Name&filterQuery=Track&sortBy=Name&isAscending=true
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery)
+        public async Task<IActionResult> GetAll([FromQuery] string? filterOn, [FromQuery] string? filterQuery, 
+                                                [FromQuery] string? sortBy, [FromQuery] bool? isAscending,
+                                                [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1000)
         {
             //Get all walks from the repository
-            var walksDomainModel = await walkRepository.GetAllAsync(filterOn,filterQuery);
+            var walksDomainModel = await walkRepository.GetAllAsync(filterOn,filterQuery,sortBy, isAscending ?? true, pageNumber, pageSize);
             //Map Domain Model to DTO
             var walksDto = mapper.Map<List<WalkDto>>(walksDomainModel);
             return Ok(walksDto);
