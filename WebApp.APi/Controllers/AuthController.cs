@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using WebApp.APi.Models.DTO;
+using WebApp.APi.Repositories;
 
 namespace WebApp.APi.Controllers
 {
@@ -10,10 +11,12 @@ namespace WebApp.APi.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> userManager;
+        private readonly ITokenRepository tokenRepositoty;
 
-        public AuthController(UserManager<IdentityUser> userManager)
+        public AuthController(UserManager<IdentityUser> userManager, ITokenRepository tokenRepositoty)
         {
             this.userManager = userManager;
+            this.tokenRepositoty = tokenRepositoty;
         }
 
         //api/Auth/Register
@@ -45,8 +48,38 @@ namespace WebApp.APi.Controllers
 
             return BadRequest(new { Errors = identityResult.Errors.Select(e => e.Description) });
         }
-        
 
+        [HttpPost]
+        [Route("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto loginRequestDto)
+        {
+            var user = await userManager.FindByEmailAsync(loginRequestDto.Username);
+            
+            if(user != null)
+            {
+                var checkPasswordResult =  await userManager.CheckPasswordAsync(user, loginRequestDto.Password);
+
+                if (checkPasswordResult)
+                {
+                    //Get Roles for this user
+                    var roles = await userManager.GetRolesAsync(user);
+
+                    if(roles != null)
+                    {
+                        //Generate JWT Token
+                        var jwtToken = tokenRepositoty.CreateJWTToken(user, roles.ToList());
+
+                        var response = new LoginResponseDto 
+                        {
+                            JwtToken = jwtToken
+                        };
+                        return Ok(response);
+                    }
+                }
+            }
+
+            return BadRequest("Username or password incorrect");
+        }
     
     }
 }
