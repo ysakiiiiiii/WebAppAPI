@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using WebApp.APi.CustomActionFilters;
 using WebApp.APi.Data;
 using WebApp.APi.Models.Domain;
 using WebApp.APi.Models.DTO;
@@ -83,8 +84,10 @@ namespace WebApp.APi.Controllers
         //Create Region
         [HttpPost]
         [Authorize(Roles = "Writer")]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] AddRegionRequestDto addRegionRequestDto)
         {
+       
             //Convert Dto to Domain Model
             //var regionDomainModel = new Region()
             //{
@@ -109,41 +112,42 @@ namespace WebApp.APi.Controllers
             var regionDto = mapper.Map<RegionDto>(regionDomainModel);
 
             return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
+
         }
 
         //Update a region
         [HttpPut]
         [Route("{id:Guid}")]
         [Authorize(Roles = "Writer")]
+        [ValidateModel]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateRegionRequestDto updateRegionRequestDto)
         {
-            //var regionDomainModel = new Region
-            //{
-            //    Code = updateRegionRequestDto.Code,
-            //    Name = updateRegionRequestDto.Name,
-            //    RegionImageUrl = updateRegionRequestDto.RegionImageUrl
-            //};
-            var regionDomainModel = mapper.Map<Region>(updateRegionRequestDto);
+                //var regionDomainModel = new Region
+                //{
+                //    Code = updateRegionRequestDto.Code,
+                //    Name = updateRegionRequestDto.Name,
+                //    RegionImageUrl = updateRegionRequestDto.RegionImageUrl
+                //};
+                var regionDomainModel = mapper.Map<Region>(updateRegionRequestDto);
 
-            regionDomainModel = await regionRepository.UpdateAsync(id, regionDomainModel);
+                regionDomainModel = await regionRepository.UpdateAsync(id, regionDomainModel);
 
-            if (regionDomainModel == null)
-            {
-                return NotFound();
-            }
+                if (regionDomainModel == null)
+                {
+                    return NotFound();
+                }
 
-            //var regionDto = new RegionDto()
-            //{
-            //    Id = regionDomainModel.Id,
-            //    Code = regionDomainModel.Code,
-            //    Name = regionDomainModel.Name,
-            //    RegionImageUrl = regionDomainModel.RegionImageUrl
-            //};
+                //var regionDto = new RegionDto()
+                //{
+                //    Id = regionDomainModel.Id,
+                //    Code = regionDomainModel.Code,
+                //    Name = regionDomainModel.Name,
+                //    RegionImageUrl = regionDomainModel.RegionImageUrl
+                //};
 
-            var regionDto = mapper.Map<RegionDto>(regionDomainModel);
+                var regionDto = mapper.Map<RegionDto>(regionDomainModel);
 
-            return Ok(regionDto);
-
+                return Ok(regionDto);
         }
 
         [HttpDelete]
